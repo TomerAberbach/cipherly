@@ -138,31 +138,35 @@ const pruneWordCandidates = (
 }
 
 /**
- * Returns the possible letter decryption mappings of this [Map] from ciphertext words
- * to plaintext candidates for those words.
+ * Computes the letter candidates from the given word candidates.
  *
- * For example, given the following ciphertext words with plaintext candidates:
+ * For example, given the following word candidates:
  * ```
- * "MCDMRCNSFX" -> { "deadweight", "disdainful", "gregarious", "perplexity" }
- * "MSCNPPRX" -> { "aflutter", "bedrooms", "gorillas", "proceeds", "typhoons" }
+ * MCDMRCNSFX => { DEADWEIGHT, DISDAINFUL, GREGARIOUS, PERPLEXITY }
+ * MSCNPPRX => { AFLUTTER, BEDROOMS, GORILLAS, PROCEEDS, TYPHOONS }
  * ```
- * `"MCDMRCNSFX"`'s candidates indicate `"M"` can decrypt to any character in the set `{ "d", "g", "p" }`.
- * However, "MSCNPPRX"'s candidates indicate `"M"` can decrypt to any character in the set `{ "a", "b", "g", "p", "t" }`.
- * Clearly, choosing to have `"M"` decrypt to a character which is not in both sets will leave a word without a viable
- * candidate. Therefore, `"M"` can only decrypt to the intersection of these sets, namely `{ "g", "p" }`.
- * This function performs these intersections across all words for all characters.
+ *
+ * `MCDMRCNSFX`'s candidates indicate `M` can decrypt to `D`, `G`, or `P`.
+ * However, `MSCNPPRX`'s candidates indicate `M` can decrypt to `A`, `B`, `G`,
+ * `P`, or `T`. Choosing to have `M` decrypt to a candidate which is not in both
+ * sets will leave a word without a viable candidate. Therefore, `M` can only
+ * decrypt to the intersection of these sets, namely `G` or `P`. This function
+ * performs these intersections across all words for all letters.
  *
  * Consider also the following situation where it was deduced that:
- * * `"M"` can decrypt to any character in the set `{ "g", "p" }`.
- * * `"L"` can decrypt to any character in the set `{ "g", "p" }`.
- * * `"X"` can decrypt to any character in the set `{ "g", "p", "w" }`.
- * Clearly, `"X"` cannot decrypt to `"g"` or `"p"` because if it did then there would not be enough
- * characters for `"M"` and `"L"` to decrypt to different characters, by pigeonhole principle. So
- * any characters, other than `"M"` and `"L"`, which have `"g"` or `"p"` as possible decryptions can have
- * them removed from their sets. In fact, whenever there are `n` characters which each decrypt to the same
- * set of `n` characters, all other characters can have that set subtracted from their possible decryptions.
- * Lastly, if more than `n` characters which decrypt to the same set of `n` characters then there is no
- * solution for the given mappings from ciphertext words to plaintext candidates.
+ * * `M` can decrypt to `G` or `P`
+ * * `L` can decrypt to `G` or `P`.
+ * * `X` can decrypt to `G`, `P`, or `W`
+ *
+ * `X` cannot decrypt to `G` or `P` because if it did, then there would not be
+ * enough letters left for `M` and `L` to decrypt to different letters, by
+ * pigeonhole principle. So any letters, other than `M` and `L`, which have `G`
+ * or `P` as possible candidates can have them removed as candidates. In fact,
+ * whenever there are `n` letters which each decrypt to the same set of `n`
+ * candidates, all other letters can have those candidates removed as
+ * candidates. Consequently, if there are more than `n` letters with the same
+ * set of `n` candidates, then there is no solution that satisfies the given
+ * word candidates.
  */
 const computeLetterCandidates = (
   wordCandidates: ReadonlyMap<string, ReadonlySet<string>>,
