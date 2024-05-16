@@ -54,38 +54,8 @@ const solveCryptogram = ({
       get,
     )
     if (maxCandidateWordsSize > 1) {
-      const remainingWordToCandidates = pipe(
-        wordCandidates,
-        map(
-          ([word, wordCandidates]) => [word, new Set(wordCandidates)] as const,
-        ),
-        reduce(toMap()),
-      )
-      const newWordsToCandidates: ReadonlyMap<string, ReadonlySet<string>>[] =
-        []
-      for (const [word, candidateWords] of remainingWordToCandidates) {
-        if (candidateWords.size === 1) {
-          continue
-        }
-
-        const candidateWord = get(first(candidateWords))
-        remainingWordToCandidates.get(word)!.delete(candidateWord)
-
-        const newWordToCandidates = pipe(
-          remainingWordToCandidates,
-          map(
-            ([word, wordCandidates]) =>
-              [word, new Set(wordCandidates)] as const,
-          ),
-          reduce(toMap()),
-        )
-        newWordToCandidates.set(word, new Set([candidateWord]))
-        newWordsToCandidates.push(newWordToCandidates)
-      }
-
       wordCandidatesStack.push(
-        remainingWordToCandidates,
-        ...newWordsToCandidates.reverse(),
+        ...partitionWordCandidates(wordCandidates).reverse(),
       )
       continue
     }
@@ -119,27 +89,6 @@ const solveCryptogram = ({
     map(([plaintext, { cipher }]) => [plaintext, cipher] as const),
     reduce(toMap()),
   )
-}
-
-const computeCipher = (wordCandidates: ReadonlyMap<string, string>) => {
-  const letterCandidates = pipe(
-    wordCandidates,
-    flatMap(([word, candidateWord]) => zipWords(word, candidateWord)),
-    reduce(toGrouped(toSet(), toMap())),
-    map(([letter, candidateLetters]) => {
-      invariant(
-        candidateLetters.size === 1,
-        `Expected once candidate per letter`,
-      )
-      return [letter, get(first(candidateLetters))] as const
-    }),
-    reduce(toMap()),
-  )
-  invariant(
-    new Set(letterCandidates.values()).size === letterCandidates.size,
-    `Expected letter candidates to be disjoint`,
-  )
-  return letterCandidates
 }
 
 const findWordCandidates = (
@@ -280,6 +229,70 @@ const computeLetterCandidates = (
     }
   } while (changed)
 
+  return letterCandidates
+}
+
+/**
+ * Partitions the given word candidates map into multiple maps.
+ *
+ * The map is partitioned by producing maps where a single candidate is chosen
+ * for words that had multiple candidates, except for potentially the last
+ * returned map.
+ *
+ * The returned maps retain the full set of cross-word candidate combinations
+ * from the original map and are ordered from highest theoretical frequency to
+ * lowest.
+ */
+const partitionWordCandidates = (
+  wordCandidates: ReadonlyMap<string, ReadonlySet<string>>,
+): Map<string, Set<string>>[] => {
+  const partitionedWordCandidates: Map<string, Set<string>>[] = []
+
+  const remainingWordCandidates = pipe(
+    wordCandidates,
+    map(([word, wordCandidates]) => [word, new Set(wordCandidates)] as const),
+    reduce(toMap()),
+  )
+  for (const [word, candidateWords] of remainingWordCandidates) {
+    if (candidateWords.size === 1) {
+      continue
+    }
+
+    const candidateWord = get(first(candidateWords))
+    remainingWordCandidates.get(word)!.delete(candidateWord)
+
+    const newWordCandidates = pipe(
+      remainingWordCandidates,
+      map(([word, wordCandidates]) => [word, new Set(wordCandidates)] as const),
+      reduce(toMap()),
+    )
+    newWordCandidates.set(word, new Set([candidateWord]))
+    partitionedWordCandidates.push(newWordCandidates)
+  }
+
+  partitionedWordCandidates.push(remainingWordCandidates)
+
+  return partitionedWordCandidates
+}
+
+const computeCipher = (wordCandidates: ReadonlyMap<string, string>) => {
+  const letterCandidates = pipe(
+    wordCandidates,
+    flatMap(([word, candidateWord]) => zipWords(word, candidateWord)),
+    reduce(toGrouped(toSet(), toMap())),
+    map(([letter, candidateLetters]) => {
+      invariant(
+        candidateLetters.size === 1,
+        `Expected once candidate per letter`,
+      )
+      return [letter, get(first(candidateLetters))] as const
+    }),
+    reduce(toMap()),
+  )
+  invariant(
+    new Set(letterCandidates.values()).size === letterCandidates.size,
+    `Expected letter candidates to be disjoint`,
+  )
   return letterCandidates
 }
 
