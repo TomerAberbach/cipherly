@@ -18,22 +18,22 @@
     "typecheck": "tomer typecheck"
   },
   "dependencies": {
-    "@remix-run/css-bundle": "^2.9.1",
-    "@remix-run/node": "^2.9.1",
-    "@remix-run/react": "^2.9.1",
-    "@remix-run/serve": "^2.9.1",
+    "@remix-run/css-bundle": "^2.9.2",
+    "@remix-run/node": "^2.9.2",
+    "@remix-run/react": "^2.9.2",
+    "@remix-run/serve": "^2.9.2",
     "isbot": "^5.1.6",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },
   "devDependencies": {
-    "@remix-run/dev": "^2.9.1",
+    "@remix-run/dev": "^2.9.2",
     "@tailwindcss/forms": "^0.5.7",
     "@tailwindcss/typography": "^0.5.13",
-    "@types/react": "^18.3.1",
+    "@types/react": "^18.3.2",
     "@types/react-dom": "^18.3.0",
-    "@typescript-eslint/eslint-plugin": "^7.8.0",
-    "@typescript-eslint/parser": "^7.8.0",
+    "@typescript-eslint/eslint-plugin": "^7.9.0",
+    "@typescript-eslint/parser": "^7.9.0",
     "autoprefixer": "^10.4.19",
     "cssnano": "^7.0.1",
     "eslint": "^8.57.0",
@@ -46,7 +46,7 @@
     "prettier": "^3.2.5",
     "prettier-plugin-tailwindcss": "^0.5.14",
     "tailwindcss": "^3.4.3",
-    "tomer": "^3.2.0",
+    "tomer": "^3.2.3",
     "typescript": "^5.4.5"
   },
   "engines": {
