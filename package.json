@@ -9,14 +9,14 @@
   "sideEffects": false,
   "type": "module",
   "scripts": {
-    "build": "remix build",
-    "dev": "remix dev --manual",
+    "prepare": "tomer install",
     "format": "tomer format",
     "lint": "tomer lint",
+    "typecheck": "tomer typecheck",
     "test": "tomer test",
-    "prepare": "tomer install",
-    "start": "remix-serve ./build/index.js",
-    "typecheck": "tomer typecheck"
+    "build": "remix build",
+    "dev": "remix dev --manual",
+    "start": "remix-serve ./build/index.js"
   },
   "dependencies": {
     "@epic-web/invariant": "^1.0.0",
