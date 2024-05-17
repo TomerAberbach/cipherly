@@ -25,7 +25,7 @@ export const readDictionary = cache(async (): Promise<Dictionary> => {
   const alphabet = createAlphabet()
   const wordFrequencies = pipe(
     await readWordFrequencies(alphabet),
-    filter(([, frequency]) => frequency > 0.0001),
+    filter(([, frequency]) => frequency > 0.000_001),
     reduce(toMap()),
   )
   return {

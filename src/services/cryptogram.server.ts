@@ -30,11 +30,14 @@ const solveCryptogram = ({
   ciphertext,
   dictionary,
   maxSolutionCount,
+  timeoutMs = Number.POSITIVE_INFINITY,
 }: {
   ciphertext: string
   dictionary: Dictionary
   maxSolutionCount: number
+  timeoutMs?: number
 }): Map<string, Map<string, string>> => {
+  const startTimeMs = Date.now()
   const solutions = new Map<
     string,
     { meanFrequency: number; cipher: Map<string, string> }
@@ -85,7 +88,11 @@ const solveCryptogram = ({
       meanFrequency: computeMeanFrequency(plaintext, dictionary),
       cipher,
     })
-  } while (solutions.size < maxSolutionCount && wordCandidatesStack.length)
+  } while (
+    solutions.size < maxSolutionCount &&
+    wordCandidatesStack.length &&
+    Date.now() - startTimeMs < timeoutMs
+  )
 
   return pipe(
     [...solutions].sort(
