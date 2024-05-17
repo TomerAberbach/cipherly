@@ -20,6 +20,12 @@ import type { Dictionary } from './dictionary.server.ts'
 import { computePattern } from './pattern.server.ts'
 import { parseWords } from './words.server.ts'
 
+/**
+ * Finds possible ciphers for the given ciphertext, using the given dictionary.
+ *
+ * Returns after finding the given number of solutions, or earlier if the search
+ * space was exhausted before finding the given number of solutions.
+ */
 const solveCryptogram = ({
   ciphertext,
   dictionary,
@@ -107,6 +113,10 @@ const findWordCandidates = (
     reduce(toMap()),
   )
 
+/**
+ * Returns a copy of the given word candidates with pairwise incompatible
+ * candidates removed, or undefined if any word has no candidates remaining.
+ */
 const pruneWordCandidates = (
   wordCandidates: ReadonlyMap<string, ReadonlySet<string>>,
   dictionary: Dictionary,
@@ -175,7 +185,6 @@ const computeLetterCandidates = (
   const letterCandidates = pipe(
     wordCandidates,
     map(([word, candidateWords]) =>
-      // Get letter to candidate for this word based on its candidate words.
       pipe(
         candidateWords,
         flatMap(candidateWord => zipWords(word, candidateWord)),
@@ -204,8 +213,15 @@ const computeLetterCandidates = (
     }),
   )
 
-  let changed
+  let candidatesChanged
   do {
+    // Group letters by their candidate sets. For example:
+    // * 'X' -> { 'A', 'B' }
+    // * 'Y' -> { 'A', 'B' }
+    // * 'Z' -> { 'A' }
+    // Becomes:
+    // * { 'A', 'B' } -> { 'X', 'Y' }
+    // * { 'A' } -> { 'Z' }
     const candidatesLetters = pipe(
       letterCandidates,
       map(([letter, candidateLetters]): [string, string] => [
@@ -215,7 +231,9 @@ const computeLetterCandidates = (
       reduce(toGrouped(toSet(), toMap())),
     )
 
-    changed = false
+    // Subtracts letters from candidates which have been pigeonholed (see
+    // function documentation above).
+    candidatesChanged = false
     for (const [letter, candidateLetters] of letterCandidates) {
       for (const [candidateLettersString, letters] of candidatesLetters) {
         const currentCandidateLetters = new Set(candidateLettersString)
@@ -226,14 +244,27 @@ const computeLetterCandidates = (
         ) {
           for (const candidate of currentCandidateLetters) {
             const deleted = candidateLetters.delete(candidate)
-            changed ||= deleted
+            candidatesChanged ||= deleted
           }
         }
       }
     }
-  } while (changed)
+  } while (candidatesChanged)
 
   return letterCandidates
+}
+
+const intersection = <Value>(
+  set1: ReadonlySet<Value>,
+  set2: ReadonlySet<Value>,
+): Set<Value> => {
+  const intersection = new Set<Value>()
+  for (const value of set1) {
+    if (set2.has(value)) {
+      intersection.add(value)
+    }
+  }
+  return intersection
 }
 
 /**
@@ -279,8 +310,13 @@ const partitionWordCandidates = (
   return partitionedWordCandidates
 }
 
+/**
+ * Computes ciphertext letter to plaintext letter mappings (a cipher) from the
+ * given ciphertext word to plaintext word mappings, which are assumed to be
+ * pairwise compatible.
+ */
 const computeCipher = (wordCandidates: ReadonlyMap<string, string>) => {
-  const letterCandidates = pipe(
+  const cipher = pipe(
     wordCandidates,
     flatMap(([word, candidateWord]) => zipWords(word, candidateWord)),
     reduce(toGrouped(toSet(), toMap())),
@@ -294,10 +330,10 @@ const computeCipher = (wordCandidates: ReadonlyMap<string, string>) => {
     reduce(toMap()),
   )
   invariant(
-    new Set(letterCandidates.values()).size === letterCandidates.size,
-    `Expected letter candidates to be disjoint`,
+    new Set(cipher.values()).size === cipher.size,
+    `Expected plaintext letters to be unique`,
   )
-  return letterCandidates
+  return cipher
 }
 
 const zipWords = (word1: string, word2: string): Iterable<[string, string]> => {
@@ -333,19 +369,6 @@ const computeMeanFrequency = (
   const frequencyMean = frequencySum / words.size
 
   return frequencyMean
-}
-
-const intersection = <Value>(
-  set1: ReadonlySet<Value>,
-  set2: ReadonlySet<Value>,
-): Set<Value> => {
-  const intersection = new Set<Value>()
-  for (const value of set1) {
-    if (set2.has(value)) {
-      intersection.add(value)
-    }
-  }
-  return intersection
 }
 
 export default solveCryptogram
