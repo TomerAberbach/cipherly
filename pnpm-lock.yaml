@@ -46,6 +46,9 @@ importers:
       react-dom:
         specifier: ^18.3.1
         version: 18.3.1(react@18.3.1)
+      react-wrap-balancer:
+        specifier: ^1.1.0
+        version: 1.1.0(react@18.3.1)
       unist-util-visit:
         specifier: ^5.0.0
         version: 5.0.0
@@ -8594,6 +8597,14 @@ packages:
     peerDependencies:
       react: '>=16.8'
 
+  react-wrap-balancer@1.1.0:
+    resolution:
+      {
+        integrity: sha512-EhF3jOZm5Fjx+Cx41e423qOv2c2aOvXAtym2OHqrGeMUnwERIyNsRBgnfT3plB170JmuYvts8K2KSPEIerKr5A==,
+      }
+    peerDependencies:
+      react: '>=16.8.0 || ^17.0.0 || ^18'
+
   react@18.3.1:
     resolution:
       {
@@ -16457,6 +16468,10 @@ snapshots:
   react-router@6.23.1(react@18.3.1):
     dependencies:
       '@remix-run/router': 1.16.1
+      react: 18.3.1
+
+  react-wrap-balancer@1.1.0(react@18.3.1):
+    dependencies:
       react: 18.3.1
 
   react@18.3.1:
