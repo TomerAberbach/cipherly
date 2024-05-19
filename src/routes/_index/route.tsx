@@ -108,10 +108,8 @@ const ExternalLink = ({
   </a>
 )
 
-export const meta: MetaFunction = () => [
-  { title: `Cryptogram Solver` },
-  { name: `description`, content: `Welcome to Remix!` },
-]
+// TODO: Add all metadata.
+export const meta: MetaFunction = () => [{ title: `Cryptogram Solver` }]
 
 export const action = async ({ request }: ActionFunctionArgs) => {
   const formData = await request.formData()
