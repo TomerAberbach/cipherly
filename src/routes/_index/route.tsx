@@ -9,10 +9,12 @@ import {
 } from '@conform-to/react'
 import { getZodConstraint, parseWithZod } from '@conform-to/zod'
 import { map, pipe, reduce, toObject } from 'lfi'
-import { Form, useActionData } from '@remix-run/react'
+import { Form, useActionData, useNavigation } from '@remix-run/react'
 import type { ReactNode } from 'react'
 import { Balancer } from 'react-wrap-balancer'
+import { useSpinDelay } from 'spin-delay'
 import magnifyingGlassSvgPath from './magnifying-glass.svg'
+import loadingSvgPath from './loading.svg'
 import solveCryptogram from '~/services/cryptogram.server.ts'
 import { readDictionary } from '~/services/dictionary.server.ts'
 import logoSvgPath from '~/private/images/logo-white.svg'
@@ -25,8 +27,8 @@ const IndexPage = () => (
     </main>
     <Footer />
     <img
-      alt=''
       src={logoSvgPath}
+      alt=''
       className='absolute bottom-0 right-3 w-1/5 min-w-48 max-w-72'
     />
   </>
@@ -42,12 +44,14 @@ const Header = () => (
     >
       Cryptogram Solver
     </Balancer>
-    <img alt='' src={magnifyingGlassSvgPath} />
+    <img src={magnifyingGlassSvgPath} alt='' />
   </header>
 )
 
 const CiphertextForm = () => {
   const { submission, solution } = useActionData<typeof action>() ?? {}
+  const navigation = useNavigation()
+  const isSubmitting = useSpinDelay(navigation.state === `submitting`)
   const [form, fields] = useForm({
     lastResult: submission,
     onValidate: ({ formData }) =>
@@ -56,29 +60,50 @@ const CiphertextForm = () => {
   })
 
   return (
-    <Form
-      method='post'
-      {...getFormProps(form)}
-      className='flex w-full max-w-prose flex-1 flex-col items-center gap-4'
-    >
-      <div className='flex w-full flex-1 flex-col gap-1'>
-        <label htmlFor={fields.text.id}>Ciphertext</label>
-        <textarea
-          {...getTextareaProps(fields.text)}
-          placeholder='Enter your ciphertext...'
-          className='w-full flex-1 resize-none rounded-md border-0 bg-neutral-50 p-3 text-neutral-900 ring-neutral-500 focus:ring-neutral-500 focus-visible:ring-[3px]'
+    <div className='relative flex w-full max-w-prose flex-1'>
+      <Form
+        method='post'
+        {...getFormProps(form)}
+        className='flex w-full flex-1 flex-col items-center gap-4'
+      >
+        <div className='flex w-full flex-1 flex-col gap-1'>
+          <label htmlFor={fields.text.id}>Ciphertext</label>
+          <div className='relative flex flex-1'>
+            <textarea
+              {...getTextareaProps(fields.text)}
+              placeholder='Enter your ciphertext...'
+              className='w-full flex-1 resize-none rounded-md border-0 bg-neutral-50 p-3 text-neutral-900 ring-neutral-500 focus:ring-neutral-500 focus-visible:ring-[3px]'
+            />
+            {isSubmitting ? (
+              <div className='absolute inset-0 flex items-center justify-center'>
+                <span
+                  role='status'
+                  className='text-xl font-medium text-neutral-900'
+                >
+                  Solving...
+                </span>
+                <div className='absolute left-1/2 top-1/2 -translate-y-6'>
+                  <img
+                    src={loadingSvgPath}
+                    alt=''
+                    className='animate-back-and-forth'
+                  />
+                </div>
+              </div>
+            ) : null}
+          </div>
+        </div>
+        <input
+          {...getInputProps(fields.action, { type: `hidden` })}
+          defaultValue={Action.SOLVE}
         />
-      </div>
-      <input
-        {...getInputProps(fields.action, { type: `hidden` })}
-        defaultValue={Action.SOLVE}
-      />
-      <button className='focus:none rounded-md bg-gradient-to-br from-neutral-600 to-neutral-700 px-5 py-1.5 font-medium focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-500'>
-        Solve
-      </button>
-      <div id={fields.text.errorId}>{fields.text.errors}</div>
-      <pre>{solution ? JSON.stringify(solution, null, 2) : null}</pre>
-    </Form>
+        <button className='focus:none rounded-md bg-gradient-to-br from-neutral-600 to-neutral-700 px-5 py-1.5 font-medium focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-500'>
+          Solve
+        </button>
+        <div id={fields.text.errorId}>{fields.text.errors}</div>
+        <pre>{solution ? JSON.stringify(solution, null, 2) : null}</pre>
+      </Form>
+    </div>
   )
 }
 

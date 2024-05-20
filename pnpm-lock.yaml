@@ -49,6 +49,9 @@ importers:
       react-wrap-balancer:
         specifier: ^1.1.0
         version: 1.1.0(react@18.3.1)
+      spin-delay:
+        specifier: ^2.0.0
+        version: 2.0.0(react@18.3.1)
       unist-util-visit:
         specifier: ^5.0.0
         version: 5.0.0
@@ -9218,6 +9221,14 @@ packages:
         integrity: sha512-sh8PWc/ftMqAAdFiBu6Fy6JUOYjqDJBJvIhpfDMyHrr0Rbp5liZqd4TjtQ/RgfLjKFZb+LMx5hpml5qOWy0qvg==,
       }
 
+  spin-delay@2.0.0:
+    resolution:
+      {
+        integrity: sha512-uNQnIjJ3Ms5ojVUMJaUZrF2Gs2gsSrVExueYrh8/yGg+ecPj65aZ0QI6ln7dguw9Wpp+bVCqGeY2Q9bT4MCL/A==,
+      }
+    peerDependencies:
+      react: '>=17.0.1'
+
   split2@4.2.0:
     resolution:
       {
@@ -16882,6 +16893,10 @@ snapshots:
       spdx-license-ids: 3.0.17
 
   spdx-license-ids@3.0.17: {}
+
+  spin-delay@2.0.0(react@18.3.1):
+    dependencies:
+      react: 18.3.1
 
   split2@4.2.0: {}
 
