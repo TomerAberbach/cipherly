@@ -74,23 +74,7 @@ const CiphertextForm = () => {
               placeholder='Enter your ciphertext...'
               className='w-full flex-1 resize-none rounded-md border-0 bg-neutral-50 p-3 text-neutral-900 ring-neutral-500 focus:ring-neutral-500 focus-visible:ring-[3px]'
             />
-            {isSubmitting ? (
-              <div className='absolute inset-0 flex items-center justify-center'>
-                <span
-                  role='status'
-                  className='text-xl font-medium text-neutral-900'
-                >
-                  Solving...
-                </span>
-                <div className='absolute left-1/2 top-1/2 -translate-y-6'>
-                  <img
-                    src={loadingSvgPath}
-                    alt=''
-                    className='animate-back-and-forth'
-                  />
-                </div>
-              </div>
-            ) : null}
+            {isSubmitting ? <LoadingView /> : null}
           </div>
         </div>
         <input
@@ -106,6 +90,17 @@ const CiphertextForm = () => {
     </div>
   )
 }
+
+const LoadingView = () => (
+  <div className='absolute inset-0 flex items-center justify-center'>
+    <span role='status' className='text-xl font-medium text-neutral-900'>
+      Solving...
+    </span>
+    <div className='absolute left-1/2 top-1/2 -translate-y-6'>
+      <img src={loadingSvgPath} alt='' className='animate-back-and-forth' />
+    </div>
+  </div>
+)
 
 const Footer = () => (
   <footer className='z-10 pb-6 text-center text-xs leading-5 text-neutral-50 mix-blend-difference'>
