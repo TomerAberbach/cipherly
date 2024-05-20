@@ -99,7 +99,17 @@ const solveCryptogram = ({
       ([, solution1], [, solution2]) =>
         solution2.meanFrequency - solution1.meanFrequency,
     ),
-    map(([plaintext, { cipher }]) => [plaintext, cipher] as const),
+    map(
+      ([plaintext, { cipher }]) =>
+        [
+          plaintext,
+          new Map(
+            [...cipher].sort(([letter1], [letter2]) =>
+              letter1.localeCompare(letter2),
+            ),
+          ),
+        ] as const,
+    ),
     reduce(toMap()),
   )
 }
