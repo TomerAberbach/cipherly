@@ -15,10 +15,9 @@ import {
   useNavigation,
   useRevalidator,
 } from '@remix-run/react'
-import { useCallback, useId, useState } from 'react'
+import { useCallback, useEffect, useId, useRef, useState } from 'react'
 import type { ReactNode } from 'react'
 import { useSpinDelay } from 'spin-delay'
-import clsx from 'clsx'
 import magnifyingGlassSvgPath from './magnifying-glass.svg'
 import loadingSvgPath from './loading.svg'
 import solveCryptogram from '~/services/cryptogram.server.ts'
@@ -58,6 +57,16 @@ const Solver = () => {
     constraint: getZodConstraint(formSchema),
   })
   const isSubmitting = useIsSubmitting()
+  const preventSolvingIfSubmitting = useCallback<
+    React.MouseEventHandler<HTMLButtonElement>
+  >(
+    e => {
+      if (isSubmitting) {
+        e.preventDefault()
+      }
+    },
+    [isSubmitting],
+  )
 
   return (
     <Form
@@ -83,7 +92,11 @@ const Solver = () => {
         {...getInputProps(fields.action, { type: `hidden` })}
         defaultValue={Action.SOLVE}
       />
-      <button className='rounded-md bg-gradient-to-br from-neutral-600 to-neutral-700 px-5 py-1.5 font-medium focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-500 active:from-neutral-700 active:to-neutral-800'>
+      <button
+        onClick={preventSolvingIfSubmitting}
+        aria-disabled={isSubmitting}
+        className='rounded-md bg-gradient-to-br from-neutral-600 to-neutral-700 px-5 py-1.5 font-medium focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-500 active:from-neutral-700 active:to-neutral-800'
+      >
         Solve
       </button>
       <div id={fields.text.errorId}>{fields.text.errors}</div>
@@ -101,7 +114,7 @@ const Loading = () => {
   const magnifyingFilterId = useId()
   return (
     <div className='absolute inset-0 flex items-center justify-center'>
-      <span role='status' className='text-xl font-medium text-neutral-900'>
+      <span role='alert' className='text-xl font-medium text-neutral-900'>
         Solving...
       </span>
       <div className='absolute left-1/2 top-1/2 -translate-y-6'>
@@ -145,62 +158,74 @@ const Solutions = ({
   ciphertext: string
   solutions: Solution[]
 }) => {
+  const dialogRef = useRef<HTMLDialogElement | null>(null)
+  useEffect(() => {
+    dialogRef.current!.showModal()
+  }, [])
+
   const { revalidate } = useRevalidator()
   const [solutionIndex, setSolutionIndex] = useState(0)
   const decrementSolutionIndex = useCallback(
-    () => setSolutionIndex(solutionIndex => solutionIndex - 1),
+    () => setSolutionIndex(solutionIndex => Math.max(0, solutionIndex - 1)),
     [],
   )
   const incrementSolutionIndex = useCallback(
-    () => setSolutionIndex(solutionIndex => solutionIndex + 1),
-    [],
+    () =>
+      setSolutionIndex(solutionIndex =>
+        Math.min(solutionIndex + 1, solutions.length - 1),
+      ),
+    [solutions.length],
   )
 
   return (
-    <div className='absolute inset-10 flex flex-col space-y-5 rounded-md border-neutral-900 bg-neutral-900 p-8'>
-      <button type='button' onClick={revalidate} className='ml-auto'>
-        <CloseIcon />
-      </button>
-      <div className='flex flex-1 flex-col justify-center space-y-5'>
+    <dialog
+      ref={dialogRef}
+      className='flex flex-col space-y-5 rounded-md border-neutral-900 bg-neutral-900 p-8 text-neutral-50 backdrop:bg-neutral-950 backdrop:bg-opacity-35'
+      onClose={revalidate}
+    >
+      <div className='flex items-center gap-5'>
         {solutions.length === 0 ? (
-          <p className='absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-center'>
-            Couldn't find a solution!
-          </p>
-        ) : (
-          <>
-            <div className='space-y-5 overflow-auto text-center'>
-              <p className='inline-block text-left'>{ciphertext}</p>
-              <CipherTable cipher={solutions[solutionIndex]!.cipher} />
-              <p className='inline-block text-left'>
-                {solutions[solutionIndex]!.plaintext}
-              </p>
-            </div>
-            <nav className='mx-auto flex w-min items-center gap-1.5'>
-              <button
-                type='button'
-                onClick={decrementSolutionIndex}
-                className={clsx(`h-6 w-6`, solutionIndex === 0 && `invisible`)}
-              >
-                <ChevronLeftIcon />
-              </button>
-              <div className='w-[3ch] whitespace-nowrap text-center'>
-                {solutionIndex + 1} / {solutions.length}
-              </div>
-              <button
-                type='button'
-                onClick={incrementSolutionIndex}
-                className={clsx(
-                  `h-6 w-6`,
-                  solutionIndex === solutions.length - 1 && `invisible`,
-                )}
-              >
-                <ChevronRightIcon />
-              </button>
-            </nav>
-          </>
-        )}
+          <p className='text-center'>Couldn't find a solution!</p>
+        ) : null}
+        <form method='dialog' className='ml-auto flex'>
+          <button className='ring-neutral-500 focus:outline-none focus-visible:ring-2'>
+            <CloseIcon />
+          </button>
+        </form>
       </div>
-    </div>
+      {solutions.length > 0 ? (
+        <div className='flex flex-1 flex-col justify-center space-y-5'>
+          <div className='space-y-5 overflow-auto text-center'>
+            <p className='inline-block text-left'>{ciphertext}</p>
+            <CipherTable cipher={solutions[solutionIndex]!.cipher} />
+            <p className='inline-block text-left'>
+              {solutions[solutionIndex]!.plaintext}
+            </p>
+          </div>
+          <nav className='mx-auto flex w-min items-center gap-1.5'>
+            <button
+              type='button'
+              onClick={decrementSolutionIndex}
+              aria-disabled={solutionIndex === 0}
+              className='h-6 w-6 ring-neutral-500 focus:outline-none focus-visible:ring-2 aria-disabled:opacity-40'
+            >
+              <ChevronLeftIcon />
+            </button>
+            <div className='whitespace-nowrap text-center'>
+              {solutionIndex + 1} / {solutions.length}
+            </div>
+            <button
+              type='button'
+              onClick={incrementSolutionIndex}
+              aria-disabled={solutionIndex === solutions.length - 1}
+              className='h-6 w-6 ring-neutral-500 focus:outline-none focus-visible:ring-2 aria-disabled:opacity-40'
+            >
+              <ChevronRightIcon />
+            </button>
+          </nav>
+        </div>
+      ) : null}
+    </dialog>
   )
 }
 

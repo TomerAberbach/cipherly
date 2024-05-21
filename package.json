@@ -26,7 +26,6 @@
     "@remix-run/node": "^2.9.2",
     "@remix-run/react": "^2.9.2",
     "@remix-run/serve": "^2.9.2",
-    "clsx": "^2.1.1",
     "isbot": "^5.1.6",
     "lfi": "^3.1.2",
     "memoize": "^10.0.0",
