@@ -15,7 +15,7 @@ import {
   useNavigation,
   useRevalidator,
 } from '@remix-run/react'
-import { useCallback, useState } from 'react'
+import { useCallback, useId, useState } from 'react'
 import type { ReactNode } from 'react'
 import { useSpinDelay } from 'spin-delay'
 import clsx from 'clsx'
@@ -97,16 +97,46 @@ const useIsSubmitting = () => {
   return isSubmitting
 }
 
-const Loading = () => (
-  <div className='absolute inset-0 flex items-center justify-center'>
-    <span role='status' className='text-xl font-medium text-neutral-900'>
-      Solving...
-    </span>
-    <div className='absolute left-1/2 top-1/2 -translate-y-6'>
-      <img src={loadingSvgPath} alt='' className='animate-back-and-forth' />
+const Loading = () => {
+  const magnifyingFilterId = useId()
+  return (
+    <div className='absolute inset-0 flex items-center justify-center'>
+      <span role='status' className='text-xl font-medium text-neutral-900'>
+        Solving...
+      </span>
+      <div className='absolute left-1/2 top-1/2 -translate-y-6'>
+        <div className='relative inline-block animate-back-and-forth'>
+          <div
+            className='absolute right-0 top-0 -z-10 h-[52px] w-[52px] rounded-full'
+            style={{ backdropFilter: `url(#${magnifyingFilterId})` }}
+          />
+          <img src={loadingSvgPath} alt='' />
+        </div>
+        <svg
+          width='100%'
+          xmlns='http://www.w3.org/2000/svg'
+          preserveAspectRatio='none'
+        >
+          <defs>
+            <filter id={magnifyingFilterId} color-interpolation-filters='sRGB'>
+              <feImage
+                href="data:image/svg+xml,%3Csvg width='128' height='128' viewBox='0 0 128 128' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cg clip-path='url(%23clip0_728_2)'%3E%3Crect width='128' height='128' fill='black'/%3E%3Cg style='mix-blend-mode:screen'%3E%3Crect width='128' height='128' fill='url(%23paint0_linear_728_2)'/%3E%3C/g%3E%3Cg style='mix-blend-mode:screen'%3E%3Crect width='128' height='128' fill='url(%23paint1_linear_728_2)'/%3E%3C/g%3E%3C/g%3E%3Cdefs%3E%3ClinearGradient id='paint0_linear_728_2' x1='0' y1='0' x2='128' y2='0' gradientUnits='userSpaceOnUse'%3E%3Cstop stop-color='%23FF0000'/%3E%3Cstop offset='1' stop-color='%23FF0000' stop-opacity='0'/%3E%3C/linearGradient%3E%3ClinearGradient id='paint1_linear_728_2' x1='0' y1='0' x2='0' y2='128' gradientUnits='userSpaceOnUse'%3E%3Cstop stop-color='%230000FF'/%3E%3Cstop offset='1' stop-color='%230000FF' stop-opacity='0'/%3E%3C/linearGradient%3E%3CclipPath id='clip0_728_2'%3E%3Crect width='128' height='128' fill='white'/%3E%3C/clipPath%3E%3C/defs%3E%3C/svg%3E%0A"
+                result='i'
+              />
+              <feDisplacementMap
+                in='SourceGraphic'
+                in2='i'
+                xChannelSelector='R'
+                yChannelSelector='B'
+                scale='25'
+              />
+            </filter>
+          </defs>
+        </svg>
+      </div>
     </div>
-  </div>
-)
+  )
+}
 
 const Solutions = ({
   ciphertext,
