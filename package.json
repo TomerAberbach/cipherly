@@ -1,5 +1,5 @@
 {
-  "name": "cryptogram",
+  "name": "cipherly",
   "private": true,
   "author": {
     "name": "Tomer Aberbach",
@@ -33,7 +33,6 @@
     "parse-english": "^7.0.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "react-wrap-balancer": "^1.1.0",
     "spin-delay": "^2.0.0",
     "unist-util-visit": "^5.0.0",
     "zod": "^3.23.8"

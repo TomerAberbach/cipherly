@@ -1,5 +1,5 @@
 import { json } from '@remix-run/node'
-import type { ActionFunctionArgs, MetaFunction } from '@remix-run/node'
+import type { ActionFunctionArgs } from '@remix-run/node'
 import { z } from 'zod'
 import {
   getFormProps,
@@ -17,7 +17,6 @@ import {
 } from '@remix-run/react'
 import { useCallback, useState } from 'react'
 import type { ReactNode } from 'react'
-import { Balancer } from 'react-wrap-balancer'
 import { useSpinDelay } from 'spin-delay'
 import clsx from 'clsx'
 import magnifyingGlassSvgPath from './magnifying-glass.svg'
@@ -43,15 +42,9 @@ const Main = () => (
 
 const Header = () => (
   <header className='flex gap-3'>
-    <Balancer
-      as='h1'
-      // Native `text-balance: wrap;` doesn't resize the container, which
-      // prevents proper centering.
-      preferNative={false}
-      className='mt-1.5 text-right text-2xl font-medium sm:mt-1 sm:text-3xl'
-    >
-      Cryptogram Solver
-    </Balancer>
+    <h1 className='mt-1.5 text-right text-2xl font-medium tracking-[0.075em] sm:mt-1 sm:text-3xl'>
+      Cipherly
+    </h1>
     <img src={magnifyingGlassSvgPath} alt='' />
   </header>
 )
@@ -296,9 +289,6 @@ const BackgroundLogo = () => (
     className='absolute bottom-0 right-3 w-1/5 min-w-48 max-w-72'
   />
 )
-
-// TODO: Add all metadata.
-export const meta: MetaFunction = () => [{ title: `Cryptogram Solver` }]
 
 export const action = async ({ request }: ActionFunctionArgs) => {
   const formData = await request.formData()
