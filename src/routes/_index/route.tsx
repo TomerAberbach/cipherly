@@ -291,6 +291,8 @@ const Footer = () => (
       <ExternalLink href='https://thenounproject.com/icon/incognito-43596'>
         Alen&nbsp;Krummenacher
       </ExternalLink>
+      . Magnifier&nbsp;effect&nbsp;by{` `}
+      <ExternalLink href='https://shud.in'>Shu&nbsp;Ding</ExternalLink>.
     </span>
   </footer>
 )
