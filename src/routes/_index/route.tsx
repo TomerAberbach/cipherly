@@ -18,6 +18,7 @@ import {
 import { useCallback, useEffect, useId, useRef, useState } from 'react'
 import type { ReactNode } from 'react'
 import { useSpinDelay } from 'spin-delay'
+import { createPortal } from 'react-dom'
 import magnifyingGlassSvgPath from './magnifying-glass.svg'
 import loadingSvgPath from './loading.svg'
 import solveCryptogram from '~/services/cryptogram.server.ts'
@@ -177,7 +178,7 @@ const Solutions = ({
     [solutions.length],
   )
 
-  return (
+  return createPortal(
     <dialog
       ref={dialogRef}
       className='flex flex-col space-y-5 rounded-md border-neutral-900 bg-neutral-900 p-8 text-neutral-50 backdrop:bg-neutral-950 backdrop:bg-opacity-35'
@@ -225,7 +226,8 @@ const Solutions = ({
           </nav>
         </div>
       ) : null}
-    </dialog>
+    </dialog>,
+    document.body,
   )
 }
 
