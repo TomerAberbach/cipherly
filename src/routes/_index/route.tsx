@@ -165,6 +165,10 @@ const Solutions = ({
   }, [])
 
   const { revalidate } = useRevalidator()
+  const stopDialogClosePropagation = useCallback<
+    React.FormEventHandler<HTMLFormElement>
+  >(e => e.stopPropagation(), [])
+
   const [solutionIndex, setSolutionIndex] = useState(0)
   const decrementSolutionIndex = useCallback(
     () => setSolutionIndex(solutionIndex => Math.max(0, solutionIndex - 1)),
@@ -188,7 +192,12 @@ const Solutions = ({
         {solutions.length === 0 ? (
           <p className='text-center'>Couldn't find a solution!</p>
         ) : null}
-        <form method='dialog' className='ml-auto flex'>
+        <form
+          method='dialog'
+          className='ml-auto flex'
+          // https://github.com/edmundhung/conform/discussions/590
+          onSubmit={stopDialogClosePropagation}
+        >
           <button className='ring-neutral-500 focus:outline-none focus-visible:ring-2'>
             <CloseIcon />
           </button>
