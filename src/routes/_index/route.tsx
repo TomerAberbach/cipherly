@@ -131,7 +131,7 @@ const Loading = () => {
           preserveAspectRatio='none'
         >
           <defs>
-            <filter id={magnifyingFilterId} color-interpolation-filters='sRGB'>
+            <filter id={magnifyingFilterId} colorInterpolationFilters='sRGB'>
               <feImage
                 href="data:image/svg+xml,%3Csvg width='128' height='128' viewBox='0 0 128 128' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cg clip-path='url(%23clip0_728_2)'%3E%3Crect width='128' height='128' fill='black'/%3E%3Cg style='mix-blend-mode:screen'%3E%3Crect width='128' height='128' fill='url(%23paint0_linear_728_2)'/%3E%3C/g%3E%3Cg style='mix-blend-mode:screen'%3E%3Crect width='128' height='128' fill='url(%23paint1_linear_728_2)'/%3E%3C/g%3E%3C/g%3E%3Cdefs%3E%3ClinearGradient id='paint0_linear_728_2' x1='0' y1='0' x2='128' y2='0' gradientUnits='userSpaceOnUse'%3E%3Cstop stop-color='%23FF0000'/%3E%3Cstop offset='1' stop-color='%23FF0000' stop-opacity='0'/%3E%3C/linearGradient%3E%3ClinearGradient id='paint1_linear_728_2' x1='0' y1='0' x2='0' y2='128' gradientUnits='userSpaceOnUse'%3E%3Cstop stop-color='%230000FF'/%3E%3Cstop offset='1' stop-color='%230000FF' stop-opacity='0'/%3E%3C/linearGradient%3E%3CclipPath id='clip0_728_2'%3E%3Crect width='128' height='128' fill='white'/%3E%3C/clipPath%3E%3C/defs%3E%3C/svg%3E%0A"
                 result='i'
