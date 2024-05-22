@@ -1,5 +1,5 @@
 import { json } from '@remix-run/node'
-import type { ActionFunctionArgs } from '@remix-run/node'
+import type { ActionFunctionArgs, LinksFunction } from '@remix-run/node'
 import { z } from 'zod'
 import { getFormProps, getTextareaProps, useForm } from '@conform-to/react'
 import { getZodConstraint, parseWithZod } from '@conform-to/zod'
@@ -351,6 +351,11 @@ const BackgroundLogo = () => (
     className='absolute bottom-0 right-3 w-1/5 min-w-48 max-w-72'
   />
 )
+
+export const links: LinksFunction = () => [
+  // Preload the loading SVG so avoid a flicker on the first use of solve.
+  { rel: `preload`, as: `image`, href: loadingSvgPath },
+]
 
 export const action = async ({ request }: ActionFunctionArgs) => {
   const formData = await request.formData()
