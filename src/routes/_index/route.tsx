@@ -42,10 +42,10 @@ const Main = () => (
 
 const Header = () => (
   <header className='flex gap-3'>
-    <h1 className='mt-1.5 text-right text-2xl font-medium tracking-[0.075em] sm:mt-1 sm:text-3xl'>
+    <h1 className='mt-2.5 text-right text-2xl font-medium tracking-[0.075em] sm:mt-2 sm:text-3xl'>
       Cipherly
     </h1>
-    <img src={magnifyingGlassSvgPath} alt='' />
+    <img src={magnifyingGlassSvgPath} alt='' className='h-20 w-20' />
   </header>
 )
 
