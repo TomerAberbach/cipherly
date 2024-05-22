@@ -1,12 +1,7 @@
 import { json } from '@remix-run/node'
 import type { ActionFunctionArgs } from '@remix-run/node'
 import { z } from 'zod'
-import {
-  getFormProps,
-  getInputProps,
-  getTextareaProps,
-  useForm,
-} from '@conform-to/react'
+import { getFormProps, getTextareaProps, useForm } from '@conform-to/react'
 import { getZodConstraint, parseWithZod } from '@conform-to/zod'
 import { map, pipe, reduce, toArray } from 'lfi'
 import {
@@ -89,10 +84,6 @@ const Solver = () => {
           {isSubmitting ? <Loading /> : null}
         </div>
       </div>
-      <input
-        {...getInputProps(fields.action, { type: `hidden` })}
-        defaultValue={Action.SOLVE}
-      />
       <button
         onClick={preventSolvingIfSubmitting}
         aria-disabled={isSubmitting}
@@ -365,14 +356,10 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     return json({ submission: submission.reply(), solutions: null })
   }
 
-  const { text, action } = submission.value
-  switch (action) {
-    case Action.SOLVE:
-      return json({
-        submission: submission.reply(),
-        solutions: await trySolveCryptogram(text),
-      })
-  }
+  return json({
+    submission: submission.reply(),
+    solutions: await trySolveCryptogram(submission.value.text),
+  })
 }
 
 const trySolveCryptogram = async (ciphertext: string): Promise<Solution[]> => {
@@ -395,16 +382,11 @@ const trySolveCryptogram = async (ciphertext: string): Promise<Solution[]> => {
 
 type Solution = { plaintext: string; cipher: Record<string, string> }
 
-const Action = { SOLVE: `solve` } as const
-type Action = (typeof Action)[keyof typeof Action]
-
-const [firstAction, ...restActions] = Object.values(Action)
 const formSchema = z.object({
   text: z.string({
     // eslint-disable-next-line camelcase
     required_error: `Missing a ciphertext!`,
   }),
-  action: z.enum([firstAction!, ...restActions]),
 })
 
 export default IndexPage
