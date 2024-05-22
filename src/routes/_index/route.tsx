@@ -71,15 +71,18 @@ const Solver = () => {
       className='flex w-full max-w-prose flex-1 flex-col items-center gap-4'
     >
       <div className='flex w-full flex-1 flex-col gap-1'>
-        <label htmlFor={fields.text.id}>Ciphertext</label>
+        <label htmlFor={fields.ciphertext.id}>Ciphertext</label>
         <div className='relative flex flex-1'>
           <textarea
-            {...getTextareaProps(fields.text)}
+            {...getTextareaProps(fields.ciphertext)}
             placeholder='Enter your ciphertext...'
             className='w-full resize-none rounded-md border-0 bg-neutral-50 p-3 text-neutral-900 ring-neutral-500 focus:ring-neutral-500 focus-visible:ring-[3px]'
           />
           {solutions ? (
-            <Solutions ciphertext={fields.text.value!} solutions={solutions} />
+            <Solutions
+              ciphertext={fields.ciphertext.value!}
+              solutions={solutions}
+            />
           ) : null}
           {isSubmitting ? <Loading /> : null}
         </div>
@@ -91,7 +94,7 @@ const Solver = () => {
       >
         Solve
       </button>
-      <div id={fields.text.errorId}>{fields.text.errors}</div>
+      <div id={fields.ciphertext.errorId}>{fields.ciphertext.errors}</div>
     </Form>
   )
 }
@@ -358,7 +361,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
   return json({
     submission: submission.reply(),
-    solutions: await trySolveCryptogram(submission.value.text),
+    solutions: await trySolveCryptogram(submission.value.ciphertext),
   })
 }
 
@@ -383,7 +386,7 @@ const trySolveCryptogram = async (ciphertext: string): Promise<Solution[]> => {
 type Solution = { plaintext: string; cipher: Record<string, string> }
 
 const formSchema = z.object({
-  text: z.string({
+  ciphertext: z.string({
     // eslint-disable-next-line camelcase
     required_error: `Missing a ciphertext!`,
   }),
