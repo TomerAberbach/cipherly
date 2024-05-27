@@ -21,7 +21,6 @@ import { cache } from './cache.server.ts'
 export const readDictionary = cache(async (): Promise<Dictionary> => {
   const alphabet = createAlphabet()
   const wordFrequencies = await readWordFrequencies(alphabet)
-  console.log(process.memoryUsage())
   return {
     alphabet,
     wordFrequencies,
@@ -39,7 +38,6 @@ const createAlphabet = (): Set<string> =>
 const readWordFrequencies = async (
   alphabet: ReadonlySet<string>,
 ): Promise<Map<string, number>> => {
-  console.log(process.memoryUsage())
   const wordFrequencies = await pipe(
     readline.createInterface({
       input: fs.createReadStream(privatePath(`frequencies/unigrams.csv`)),
@@ -71,7 +69,6 @@ const readWordFrequencies = async (
   normalizeFrequencies(wordFrequencies)
   filterLowFrequencies(wordFrequencies)
 
-  console.log(process.memoryUsage())
   return wordFrequencies
 }
 
