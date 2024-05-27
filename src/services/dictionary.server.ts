@@ -2,7 +2,6 @@ import fs from 'node:fs'
 import readline from 'node:readline'
 import {
   all,
-  filter,
   get,
   map,
   mapAsync,
@@ -11,8 +10,6 @@ import {
   rangeTo,
   reduce,
   reduceAsync,
-  toArray,
-  toGrouped,
   toMap,
   toSet,
 } from 'lfi'
@@ -23,11 +20,8 @@ import { cache } from './cache.server.ts'
 
 export const readDictionary = cache(async (): Promise<Dictionary> => {
   const alphabet = createAlphabet()
-  const wordFrequencies = pipe(
-    await readWordFrequencies(alphabet),
-    filter(([, frequency]) => frequency > 0.000_001),
-    reduce(toMap()),
-  )
+  const wordFrequencies = await readWordFrequencies(alphabet)
+  console.log(process.memoryUsage())
   return {
     alphabet,
     wordFrequencies,
@@ -45,6 +39,7 @@ const createAlphabet = (): Set<string> =>
 const readWordFrequencies = async (
   alphabet: ReadonlySet<string>,
 ): Promise<Map<string, number>> => {
+  console.log(process.memoryUsage())
   const wordFrequencies = await pipe(
     readline.createInterface({
       input: fs.createReadStream(privatePath(`frequencies/unigrams.csv`)),
@@ -69,40 +64,37 @@ const readWordFrequencies = async (
 
       return [word, frequency] as const
     }),
-    reduceAsync(toGrouped(toArray(), toMap())),
+    reduceAsync(toMap()),
   )
 
-  return normalizeFrequencies(
-    sortFrequenciesDescending(
-      pipe(
-        wordFrequencies,
-        map(([word, frequencies]) => {
-          invariant(frequencies.length === 1, `Each word should appear once`)
-          return [word, frequencies[0]!] as const
-        }),
-        reduce(toMap()),
-      ),
-    ),
-  )
+  verifyFrequenciesDescending(wordFrequencies)
+  normalizeFrequencies(wordFrequencies)
+  filterLowFrequencies(wordFrequencies)
+
+  console.log(process.memoryUsage())
+  return wordFrequencies
 }
 
-/** Returns a copy of the given map sorted in descending order by frequency. */
-const sortFrequenciesDescending = (
+/** Verifies the given map is sorted in descending order by frequency. */
+const verifyFrequenciesDescending = (
   frequencies: ReadonlyMap<string, number>,
-): Map<string, number> =>
-  new Map(
-    [...frequencies].sort(
-      ([, frequency1], [, frequency2]) => frequency2 - frequency1,
-    ),
-  )
+): void => {
+  let previousFrequency
+  for (const frequency of frequencies.values()) {
+    if (previousFrequency === undefined) {
+      previousFrequency = frequency
+      continue
+    }
 
-/**
- * Returns a copy of the given map with frequencies normalized to the interval
- * (0, 1].
- */
-const normalizeFrequencies = (
-  frequencies: ReadonlyMap<string, number>,
-): Map<string, number> => {
+    invariant(
+      frequency < previousFrequency,
+      `Expected frequencies to be sorted in descending order`,
+    )
+  }
+}
+
+/** Modifies the map with frequencies normalized to the interval (0, 1]. */
+const normalizeFrequencies = (frequencies: Map<string, number>): void => {
   const maxFrequency = pipe(
     frequencies,
     map(([, frequency]) => frequency),
@@ -110,11 +102,19 @@ const normalizeFrequencies = (
     get,
   )
   invariant(maxFrequency > 0, `The maximum frequency must be greater than zero`)
-  return pipe(
-    frequencies,
-    map(([word, frequency]) => [word, frequency / maxFrequency] as const),
-    reduce(toMap()),
-  )
+
+  for (const [word, frequency] of frequencies) {
+    frequencies.set(word, frequency / maxFrequency)
+  }
+}
+
+/** Deletes entries from the map with low frequencies. */
+const filterLowFrequencies = (frequencies: Map<string, number>): void => {
+  for (const [word, frequency] of frequencies) {
+    if (frequency <= 0.000_001) {
+      frequencies.delete(word)
+    }
+  }
 }
 
 export type Dictionary = {
