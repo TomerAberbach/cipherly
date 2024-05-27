@@ -13,7 +13,7 @@
   }
 
   body {
-    @apply flex-1 overflow-hidden px-6 sm:px-12;
+    @apply flex-1;
   }
 
   * {

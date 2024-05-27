@@ -21,11 +21,11 @@ import { readDictionary } from '~/services/dictionary.server.ts'
 import logoSvgPath from '~/private/images/logo-white.svg'
 
 const IndexPage = () => (
-  <>
+  <div className='relative flex flex-1 flex-col overflow-hidden px-6 sm:px-12'>
     <Main />
     <Footer />
     <BackgroundLogo />
-  </>
+  </div>
 )
 
 const Main = () => (
