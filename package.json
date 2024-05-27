@@ -27,7 +27,7 @@
     "@remix-run/react": "^2.9.2",
     "@remix-run/serve": "^2.9.2",
     "isbot": "^5.1.6",
-    "lfi": "^3.1.2",
+    "lfi": "^3.2.0",
     "memoize": "^10.0.0",
     "parse-english": "^7.0.0",
     "react": "^18.3.1",
@@ -55,11 +55,13 @@
     "eslint-plugin-jsx-a11y": "^6.8.0",
     "eslint-plugin-react": "^7.34.1",
     "eslint-plugin-react-hooks": "^4.6.2",
+    "got": "^14.3.0",
     "postcss-import": "^16.1.0",
     "prettier": "^3.2.5",
     "prettier-plugin-tailwindcss": "^0.5.14",
     "tailwindcss": "^3.4.3",
     "tomer": "^3.2.3",
+    "ts-node": "^10.9.2",
     "typescript": "^5.4.5"
   },
   "engines": {

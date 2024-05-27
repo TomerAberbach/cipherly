@@ -305,7 +305,7 @@ const ChevronRightIcon = () => (
 )
 
 const Footer = () => (
-  <footer className='z-10 pb-6 text-center text-xs leading-5 text-neutral-50 mix-blend-difference'>
+  <footer className='z-10 mx-4 pb-6 text-center text-xs leading-5 text-neutral-50 mix-blend-difference'>
     ©&nbsp;
     <ExternalLink href='https://tomeraberba.ch'>
       Tomer&nbsp;Aberbach
@@ -321,7 +321,7 @@ const Footer = () => (
       <ExternalLink href='https://thenounproject.com/icon/incognito-43596'>
         Alen&nbsp;Krummenacher
       </ExternalLink>
-      . Magnifier&nbsp;effect&nbsp;by{` `}
+      . Magnifier&nbsp;effect&nbsp;by&nbsp;
       <ExternalLink href='https://shud.in'>Shu&nbsp;Ding</ExternalLink>.
     </span>
   </footer>
@@ -348,7 +348,7 @@ const BackgroundLogo = () => (
   <img
     src={logoSvgPath}
     alt=''
-    className='absolute bottom-0 right-3 w-1/5 min-w-48 max-w-72'
+    className='absolute bottom-0 left-[calc(100%+5px-20vw)] w-1/5 min-w-48 max-w-72'
   />
 )
 

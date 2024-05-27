@@ -42,13 +42,12 @@ const createAlphabet = (): Set<string> =>
     reduce(toSet()),
   )
 
-// https://www.kaggle.com/datasets/rtatman/english-word-frequency
 const readWordFrequencies = async (
   alphabet: ReadonlySet<string>,
 ): Promise<Map<string, number>> => {
   const wordFrequencies = await pipe(
     readline.createInterface({
-      input: fs.createReadStream(privatePath(`unigram-frequencies.csv`)),
+      input: fs.createReadStream(privatePath(`frequencies/unigrams.csv`)),
       crlfDelay: Infinity,
     }),
     mapAsync(line => {
