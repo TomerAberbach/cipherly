@@ -1,5 +1,9 @@
 app = 'cipherly'
 primary_region = 'ewr'
+swap_size_mb = 1024
+
+[env]
+NODE_OPTIONS = '--max-old-space-size=4096'
 
 [build]
 
@@ -12,6 +16,6 @@ min_machines_running = 0
 processes = ['app']
 
 [[vm]]
-memory = '4gb'
+memory = '1gb'
 cpu_kind = 'shared'
-cpus = 2
+cpus = 1
