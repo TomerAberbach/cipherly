@@ -88,6 +88,7 @@ const Solver = () => {
         </div>
       </div>
       <button
+        type='submit'
         onClick={preventSolvingIfSubmitting}
         aria-disabled={isSubmitting}
         className='rounded-md bg-gradient-to-br from-neutral-600 to-neutral-700 px-5 py-1.5 font-medium focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-500 active:from-neutral-700 active:to-neutral-800'
@@ -184,7 +185,7 @@ const Solutions = ({
     >
       <div className='flex items-center gap-5'>
         {solutions.length === 0 ? (
-          <p className='text-center'>Couldn't find a solution!</p>
+          <p className='text-center'>Couldn&apos;t find a solution!</p>
         ) : null}
         <form
           method='dialog'
@@ -192,7 +193,10 @@ const Solutions = ({
           // https://github.com/edmundhung/conform/discussions/590
           onSubmit={stopDialogClosePropagation}
         >
-          <button className='ring-neutral-500 focus:outline-none focus-visible:ring-2'>
+          <button
+            type='submit'
+            className='ring-neutral-500 focus:outline-none focus-visible:ring-2'
+          >
             <CloseIcon />
           </button>
         </form>
