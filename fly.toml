@@ -4,7 +4,7 @@ swap_size_mb = 1024
 
 [env]
 NODE_OPTIONS = '--max-old-space-size=4096'
-SITE_URL = "https://cipherly.dev"
+SITE_URL = "http://cipherly.dev"
 
 [http_service]
 internal_port = 3000
