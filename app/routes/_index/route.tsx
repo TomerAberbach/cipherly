@@ -7,7 +7,7 @@ import {
 import type { ActionFunctionArgs, LinksFunction } from 'react-router'
 import { z } from 'zod'
 import { getFormProps, getTextareaProps, useForm } from '@conform-to/react'
-import { getZodConstraint, parseWithZod } from '@conform-to/zod'
+import { getZodConstraint, parseWithZod } from '@conform-to/zod/v4'
 import { map, pipe, reduce, toArray } from 'lfi'
 import { useCallback, useEffect, useId, useRef, useState } from 'react'
 import type { ReactNode } from 'react'
@@ -90,7 +90,7 @@ const Solver = () => {
         type='submit'
         onClick={preventSolvingIfSubmitting}
         aria-disabled={isSubmitting}
-        className='rounded-md bg-linear-to-br from-neutral-600 to-neutral-700 px-5 py-1.5 font-medium focus:outline-hidden focus-visible:ring-2 focus-visible:ring-neutral-500 active:from-neutral-700 active:to-neutral-800'
+        className='cursor-pointer rounded-md bg-linear-to-br from-neutral-600 to-neutral-700 px-5 py-1.5 font-medium focus:outline-hidden focus-visible:ring-2 focus-visible:ring-neutral-500 active:from-neutral-700 active:to-neutral-800'
       >
         Solve
       </button>
@@ -179,7 +179,7 @@ const Solutions = ({
   return createPortal(
     <dialog
       ref={dialogRef}
-      className='backdrop:bg-opacity-35 flex flex-col space-y-5 rounded-md border-neutral-900 bg-neutral-900 p-8 text-neutral-50 backdrop:bg-neutral-950'
+      className='m-auto flex flex-col space-y-5 rounded-md border-neutral-900 bg-neutral-900 p-8 text-neutral-50 backdrop:bg-neutral-950/35'
       // eslint-disable-next-line typescript/no-misused-promises
       onClose={revalidate}
     >
@@ -195,7 +195,7 @@ const Solutions = ({
         >
           <button
             type='submit'
-            className='ring-neutral-500 focus:outline-hidden focus-visible:ring-2'
+            className='cursor-pointer ring-neutral-500 focus:outline-hidden focus-visible:ring-2'
           >
             <CloseIcon />
           </button>
@@ -215,7 +215,7 @@ const Solutions = ({
               type='button'
               onClick={decrementSolutionIndex}
               aria-disabled={solutionIndex === 0}
-              className='h-6 w-6 ring-neutral-500 focus:outline-hidden focus-visible:ring-2 aria-disabled:opacity-40'
+              className='h-6 w-6 cursor-pointer ring-neutral-500 focus:outline-hidden focus-visible:ring-2 aria-disabled:opacity-40'
             >
               <ChevronLeftIcon />
             </button>
@@ -226,7 +226,7 @@ const Solutions = ({
               type='button'
               onClick={incrementSolutionIndex}
               aria-disabled={solutionIndex === solutions.length - 1}
-              className='h-6 w-6 ring-neutral-500 focus:outline-hidden focus-visible:ring-2 aria-disabled:opacity-40'
+              className='h-6 w-6 cursor-pointer ring-neutral-500 focus:outline-hidden focus-visible:ring-2 aria-disabled:opacity-40'
             >
               <ChevronRightIcon />
             </button>

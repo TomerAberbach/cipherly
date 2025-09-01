@@ -1,6 +1,6 @@
 @import 'tailwindcss';
 @plugin "@tailwindcss/typography";
-@plugin "@tailwindcss/form";
+@plugin "@tailwindcss/forms";
 
 @theme {
   --font-*: initial;
