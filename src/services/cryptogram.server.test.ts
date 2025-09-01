@@ -1,8 +1,8 @@
 import { fc, test } from '@fast-check/vitest'
 import { expect } from 'vitest'
-import solveCryptogram from '../../src/services/cryptogram.server.ts'
-import { readDictionary } from '../../src/services/dictionary.server.ts'
-import { parseWords } from '../../src/services/words.server.ts'
+import solveCryptogram from './cryptogram.server.ts'
+import { readDictionary } from './dictionary.server.ts'
+import { parseWords } from './words.server.ts'
 
 const dictionary = await readDictionary()
 

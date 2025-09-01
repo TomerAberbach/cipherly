@@ -230,7 +230,7 @@ const computeLetterCandidates = (
     }),
   )
 
-  let candidatesChanged
+  let candidatesChanged: boolean
   do {
     // Group letters by their candidate sets. For example:
     // * 'X' -> { 'A', 'B' }

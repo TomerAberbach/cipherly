@@ -8,16 +8,19 @@
   },
   "sideEffects": false,
   "type": "module",
+  "engines": {
+    "node": ">= 22"
+  },
   "scripts": {
-    "prepare": "tomer install",
-    "format": "tomer format",
-    "lint": "tomer lint",
-    "typecheck": "tomer typecheck",
-    "test": "tomer test",
+    "format": "prettier --cache --write .",
+    "lint": "eslint --cache --cache-location node_modules/.cache/eslint/ --fix .",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest",
     "build": "remix build",
     "dev": "remix dev --manual",
     "start": "remix-serve ./build/index.js"
   },
+  "prettier": "@tomer/prettier-config",
   "dependencies": {
     "@conform-to/react": "^1.1.5",
     "@conform-to/zod": "^1.1.5",
@@ -42,23 +45,21 @@
     "@remix-run/dev": "^2.10.3",
     "@tailwindcss/forms": "^0.5.7",
     "@tailwindcss/typography": "^0.5.13",
+    "@tomer/eslint-config": "^4.1.1",
+    "@tomer/prettier-config": "^4.0.0",
     "@types/node": "^22.0.0",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
     "autoprefixer": "^10.4.19",
     "cssnano": "^7.0.4",
-    "eslint": "^8.57.0",
+    "eslint": "^9.34.0",
     "got": "^14.4.2",
     "postcss-import": "^16.1.0",
-    "prettier": "^3.3.3",
+    "prettier": "^3.6.2",
     "prettier-plugin-tailwindcss": "^0.6.5",
     "tailwindcss": "^3.4.7",
-    "tomer": "^4.0.1",
     "ts-node": "^10.9.2",
     "typescript": "^5.5.4",
     "vitest": "^2.0.5"
-  },
-  "engines": {
-    "node": ">= 18"
   }
 }

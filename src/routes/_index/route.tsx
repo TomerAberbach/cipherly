@@ -396,7 +396,6 @@ type Solution = { plaintext: string; cipher: Record<string, string> }
 
 const formSchema = z.object({
   ciphertext: z.string({
-    // eslint-disable-next-line camelcase
     required_error: `Missing a ciphertext!`,
   }),
 })
