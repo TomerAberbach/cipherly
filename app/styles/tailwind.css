@@ -1,0 +1,45 @@
+@import 'tailwindcss';
+@plugin "@tailwindcss/typography";
+@plugin "@tailwindcss/form";
+
+@theme {
+  --font-*: initial;
+  --font-sans:
+    Saira, ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji',
+    'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+
+  --animate-back-and-forth: back-and-forth 2s ease-in-out infinite;
+
+  @keyframes back-and-forth {
+    0%,
+    100% {
+      transform: translateX(-150%);
+    }
+    50% {
+      transform: translateX(50%);
+    }
+  }
+}
+
+@layer base {
+  html {
+    @apply font-sans text-base sm:text-lg;
+  }
+
+  html,
+  body {
+    @apply flex min-h-full flex-col bg-linear-to-br from-neutral-800 to-neutral-900 to-40% text-neutral-50;
+  }
+
+  body {
+    @apply flex-1;
+  }
+
+  * {
+    @apply uppercase!;
+  }
+
+  ::-webkit-scrollbar {
+    -webkit-appearance: none;
+  }
+}

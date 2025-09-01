@@ -21,7 +21,7 @@ import {
   toSet,
 } from 'lfi'
 import { got } from 'got'
-import { parseWords } from '../src/services/words.server.ts'
+import { parseWords } from '../app/services/words.server.ts'
 
 const downloadNgramFrequencies = async (
   n: number,

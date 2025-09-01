@@ -1,15 +1,14 @@
-import { json } from '@remix-run/node'
-import type { ActionFunctionArgs, LinksFunction } from '@remix-run/node'
-import { z } from 'zod'
-import { getFormProps, getTextareaProps, useForm } from '@conform-to/react'
-import { getZodConstraint, parseWithZod } from '@conform-to/zod'
-import { map, pipe, reduce, toArray } from 'lfi'
 import {
   Form,
   useActionData,
   useNavigation,
   useRevalidator,
-} from '@remix-run/react'
+} from 'react-router'
+import type { ActionFunctionArgs, LinksFunction } from 'react-router'
+import { z } from 'zod'
+import { getFormProps, getTextareaProps, useForm } from '@conform-to/react'
+import { getZodConstraint, parseWithZod } from '@conform-to/zod'
+import { map, pipe, reduce, toArray } from 'lfi'
 import { useCallback, useEffect, useId, useRef, useState } from 'react'
 import type { ReactNode } from 'react'
 import { useSpinDelay } from 'spin-delay'
@@ -91,7 +90,7 @@ const Solver = () => {
         type='submit'
         onClick={preventSolvingIfSubmitting}
         aria-disabled={isSubmitting}
-        className='rounded-md bg-gradient-to-br from-neutral-600 to-neutral-700 px-5 py-1.5 font-medium focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-500 active:from-neutral-700 active:to-neutral-800'
+        className='rounded-md bg-linear-to-br from-neutral-600 to-neutral-700 px-5 py-1.5 font-medium focus:outline-hidden focus-visible:ring-2 focus-visible:ring-neutral-500 active:from-neutral-700 active:to-neutral-800'
       >
         Solve
       </button>
@@ -113,10 +112,10 @@ const Loading = () => {
       <span role='alert' className='text-xl font-medium text-neutral-900'>
         Solving...
       </span>
-      <div className='absolute left-1/2 top-1/2 -translate-y-6'>
-        <div className='relative inline-block animate-back-and-forth'>
+      <div className='absolute top-1/2 left-1/2 -translate-y-6'>
+        <div className='animate-back-and-forth relative inline-block'>
           <div
-            className='absolute right-0 top-0 -z-10 h-[52px] w-[52px] rounded-full'
+            className='absolute top-0 right-0 -z-10 h-[52px] w-[52px] rounded-full'
             style={{ backdropFilter: `url(#${magnifyingFilterId})` }}
           />
           <img src={loadingSvgPath} alt='' />
@@ -180,7 +179,8 @@ const Solutions = ({
   return createPortal(
     <dialog
       ref={dialogRef}
-      className='flex flex-col space-y-5 rounded-md border-neutral-900 bg-neutral-900 p-8 text-neutral-50 backdrop:bg-neutral-950 backdrop:bg-opacity-35'
+      className='backdrop:bg-opacity-35 flex flex-col space-y-5 rounded-md border-neutral-900 bg-neutral-900 p-8 text-neutral-50 backdrop:bg-neutral-950'
+      // eslint-disable-next-line typescript/no-misused-promises
       onClose={revalidate}
     >
       <div className='flex items-center gap-5'>
@@ -195,7 +195,7 @@ const Solutions = ({
         >
           <button
             type='submit'
-            className='ring-neutral-500 focus:outline-none focus-visible:ring-2'
+            className='ring-neutral-500 focus:outline-hidden focus-visible:ring-2'
           >
             <CloseIcon />
           </button>
@@ -215,18 +215,18 @@ const Solutions = ({
               type='button'
               onClick={decrementSolutionIndex}
               aria-disabled={solutionIndex === 0}
-              className='h-6 w-6 ring-neutral-500 focus:outline-none focus-visible:ring-2 aria-disabled:opacity-40'
+              className='h-6 w-6 ring-neutral-500 focus:outline-hidden focus-visible:ring-2 aria-disabled:opacity-40'
             >
               <ChevronLeftIcon />
             </button>
-            <div className='whitespace-nowrap text-center'>
+            <div className='text-center whitespace-nowrap'>
               {solutionIndex + 1} / {solutions.length}
             </div>
             <button
               type='button'
               onClick={incrementSolutionIndex}
               aria-disabled={solutionIndex === solutions.length - 1}
-              className='h-6 w-6 ring-neutral-500 focus:outline-none focus-visible:ring-2 aria-disabled:opacity-40'
+              className='h-6 w-6 ring-neutral-500 focus:outline-hidden focus-visible:ring-2 aria-disabled:opacity-40'
             >
               <ChevronRightIcon />
             </button>
@@ -352,7 +352,7 @@ const BackgroundLogo = () => (
   <img
     src={logoSvgPath}
     alt=''
-    className='absolute bottom-0 left-[calc(100%+5px-20vw)] w-1/5 min-w-48 max-w-72'
+    className='absolute bottom-0 left-[calc(100%+5px-20vw)] w-1/5 max-w-72 min-w-48'
   />
 )
 
@@ -365,13 +365,13 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   const formData = await request.formData()
   const submission = parseWithZod(formData, { schema: formSchema })
   if (submission.status !== `success`) {
-    return json({ submission: submission.reply(), solutions: null })
+    return { submission: submission.reply(), solutions: null }
   }
 
-  return json({
+  return {
     submission: submission.reply(),
     solutions: await trySolveCryptogram(submission.value.ciphertext),
-  })
+  }
 }
 
 const trySolveCryptogram = async (ciphertext: string): Promise<Solution[]> => {
@@ -396,7 +396,13 @@ type Solution = { plaintext: string; cipher: Record<string, string> }
 
 const formSchema = z.object({
   ciphertext: z.string({
-    required_error: `Missing a ciphertext!`,
+    error: issue => {
+      if (issue.input === undefined) {
+        return `Missing a ciphertext!`
+      }
+
+      return undefined
+    },
   }),
 })
 

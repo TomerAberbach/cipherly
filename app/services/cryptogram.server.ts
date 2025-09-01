@@ -120,13 +120,10 @@ const findWordCandidates = (
 ): Map<string, ReadonlySet<string>> =>
   pipe(
     words,
-    map(
-      word =>
-        [
-          word,
-          dictionary.patternWords.get(computePattern(word)) ?? new Set(),
-        ] as const,
-    ),
+    map(word => [
+      word,
+      dictionary.patternWords.get(computePattern(word)) ?? new Set<string>(),
+    ]),
     reduce(toMap()),
   )
 

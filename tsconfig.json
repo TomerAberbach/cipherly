@@ -24,11 +24,13 @@
     // Runtime
     "lib": ["esnext", "dom", "dom.iterable"],
     "jsx": "react-jsx",
+    "types": ["@react-router/node", "vite/client"],
+    "rootDirs": [".", "./.react-router/types"],
     "baseUrl": ".",
     "paths": {
       "~/private/*": ["./private/*"],
-      "~/*": ["src/*"]
+      "~/*": ["app/*"]
     }
   },
-  "include": ["remix.env.d.ts", "**/*.ts", "**/*.tsx"]
+  "include": [".react-router/types/**/*", "**/*.ts", "**/*.tsx"]
 }

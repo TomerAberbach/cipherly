@@ -1,14 +1,6 @@
-import { cssBundleHref } from '@remix-run/css-bundle'
-import type { LinksFunction, MetaFunction } from '@remix-run/node'
-import {
-  Links,
-  LiveReload,
-  Meta,
-  Outlet,
-  Scripts,
-  ScrollRestoration,
-} from '@remix-run/react'
-import styles from './styles/index.css'
+import type { LinksFunction, MetaFunction } from 'react-router'
+import { Links, Meta, Outlet, Scripts, ScrollRestoration } from 'react-router'
+import stylesUrl from './styles/tailwind.css?url'
 import { getSiteUrl } from './services/url.ts'
 import logoBlackIcoPath from '~/private/images/logo-black.ico'
 import logoWhiteIcoPath from '~/private/images/logo-white.ico'
@@ -30,7 +22,6 @@ const App = () => (
       <Outlet />
       <ScrollRestoration />
       <Scripts />
-      <LiveReload />
     </body>
   </html>
 )
@@ -72,8 +63,7 @@ export const meta: MetaFunction = ({ location }) => {
 }
 
 export const links: LinksFunction = () => [
-  { rel: `stylesheet`, href: styles },
-  ...(cssBundleHref ? [{ rel: `stylesheet`, href: cssBundleHref }] : []),
+  { rel: `stylesheet`, href: stylesUrl },
   { rel: `preconnect`, href: `https://fonts.googleapis.com` },
   {
     rel: `preconnect`,
